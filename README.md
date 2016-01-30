@@ -44,7 +44,7 @@ Copy `config/zf-doctrine-querybuilder.global.php.dist` to `config/autoload/zf-do
 Use With Apigility Doctrine
 ---------------------------
 
-To enable all filters you may override the default query providers in zf-apigility-doctrine.  Add this to your `zf-doctrine-querybuilder.global.php` config file and filters and order-by will be applied if the are in `$_GET['filter']` or `$_GET['order-by']` request.  These $_GET keys are customizable through `zf-doctrine-querybuilder-options`
+To enable all filters you may override the default query providers in zf-apigility-doctrine.  Add this to your `zf-doctrine-querybuilder.global.php` config file and filters and order-by will be applied if they are in `$_GET['filter']` or `$_GET['order-by']` request.  These $_GET keys are customizable through `zf-doctrine-querybuilder-options`
 
 ```php
 'zf-apigility-doctrine-query-provider' => array(
@@ -164,6 +164,7 @@ $(function() {
 Querying Relations
 ------------------
 
+### Single valued
 It is possible to query collections by relations - just supply the relation name as `fieldName` and
 identifier as `value`.
 
@@ -195,6 +196,27 @@ find all users that belong to UserGroup id #1 by querying the user resource with
     array('type' => 'eq', 'field' => 'group', 'value' => '1')
 ```
 
+### Collection valued
+To match entities A that have entity B in a collection use `ismemberof`.
+Assuming `User` has a ManyToMany (or OneToMany) association with `UserGroup`...
+
+```php
+/**
+ * @Entity
+ */
+class User {
+    /**
+     * @ManyToMany(targetEntity="UserGroup")
+     * @var UserGroup[]|ArrayCollection
+     */
+    protected $groups;
+}
+```
+find all users that belong to UserGroup id #1 by querying the user resource with the following filter:
+
+```php
+    array('type' => 'ismemberof', 'field' => 'groups', 'value' => '1')
+```
 
 Format of Date Fields
 ---------------------
@@ -322,6 +344,12 @@ array('type' => 'like', 'field' => 'fieldName', 'value' => 'like%search')
 ```
 
 ### ORM Only
+
+Is Member Of:
+
+```php
+array('type' => 'ismemberof', 'field' => 'fieldName', 'value' => 1)
+```
 
 AndX:
 
